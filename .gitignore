@@ -1,0 +1,6 @@
+data/
+result/
+nohup.out
+mmfdl/__pycache__/
+mmfdl/*/__pycache__/
+mmfdl/*/.ipynb_checkpoints/
