@@ -98,6 +98,40 @@ class comModel(nn.Module):
         gc_out = self.gc_fc(gc).squeeze()
         
         return smi_out, ep_out, gc_out
+    
+    def get_embeddings(self, encodedSmi, encodedSmi_mask, ecfp, x, edge_index, batch):
+        """
+        Get embeddings for the input data.
+        Returns:
+            smi_embedding: SMILES embedding (batch_size, hidden_dim)
+            ep_embedding: ECFP embedding (batch_size, output_dim)
+            gc_embedding: Graph embedding (batch_size, 2*num_features_x)
+        """
+        smi_mask = encodedSmi_mask.unsqueeze(1)
+        smi_encoded = self.encoder(encodedSmi, smi_mask)
+        smi_encoded = smi_encoded.view(smi_encoded.shape[0], smi_encoded.shape[2], -1)
+        smi_ln = self.smi_fc1(smi_encoded)
+        smi_ln = smi_ln.view(smi_ln.shape[0], -1)
+        smi_embedding = self.smi_fc2(smi_ln)  # (batch_size, hidden_dim) -> (batch_size, n_output)
+        smi_embedding = smi_ln  # (batch_size, hidden_dim)
+    
+        if ecfp.dim() == 2:
+            ecfp = ecfp.unsqueeze(1)
+        ep_gru, _ = self.ep_gru(ecfp)
+        ep_attended_out = 0
+        for i in range(self.num_attention_heads):
+            ep_attention_weights = torch.softmax(self.ep_attention_layers[i](ep_gru), dim=1)
+            ep_linear = self.ep_fc_layers[i](ep_gru)
+            ep_attended_out += ep_attention_weights * ep_linear
+        ep_embedding = ep_attended_out.mean(dim=1) / self.num_attention_heads  # (batch_size, output_dim)
+
+        x = self.gcn_conv1(x, edge_index)
+        x = F.relu(x)
+        x = self.gcn_conv2(x, edge_index)
+        x = F.relu(x)
+        gc_embedding = gap(x, batch)  # (batch_size, 2*num_features_x)
+        
+        return smi_embedding, ep_embedding, gc_embedding
 
 
 
