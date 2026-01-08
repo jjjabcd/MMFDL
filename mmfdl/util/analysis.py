@@ -51,18 +51,16 @@ def pltPredict_linregress(y_pred, y, save_path):
     
     print("pearson: ",scipy.stats.pearsonr(y_pred, y))
 
-    # maxValue = math.ceil(max(np.max(y), np.max(y_pred)))
-    # minValue = math.ceil(min(np.min(y), np.min(y_pred)))
-    maxValue = 4
-    minValue = -8
+    maxValue = math.ceil(max(np.max(y), np.max(y_pred)))
+    minValue = math.ceil(min(np.min(y), np.min(y_pred)))
     y_flat_list = y_pred.flatten().tolist()
     slope, intercept, r_value, p_value, std_err = stats.linregress(y, y_flat_list)
     line = slope * np.array(y) + intercept
     print(slope, r_value)
 
     fig = plt.figure()#�½�һ��ͼ
-    plt.xlabel('true logKD', fontsize=20)
-    plt.ylabel('predicted logKD', fontsize=20)
+    plt.xlabel('actual value', fontsize=20)
+    plt.ylabel('predicted value', fontsize=20)
     plt.tick_params(labelsize=15)
     plt.scatter(y, y_pred, s=50, alpha=0.8)
     plt.plot(y, line, color='black', label='slope = {0:.4f}\n R = {1:.2f}'.format(slope, r_value), lw=2)
