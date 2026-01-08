@@ -335,7 +335,6 @@ def make_variable_one(smiles, letters, max_smiles_len):
             resultVec.append(letters[item])
         
 
- 
     if len(resultVec) < max_smiles_len:
         resultVec.extend([0] * (max_smiles_len - len(resultVec)))
     elif len(resultVec) > max_smiles_len:
