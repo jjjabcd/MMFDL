@@ -321,8 +321,18 @@ def transPropToTorch(data):
 def make_variable_one(smiles, letters, max_smiles_len):
     resultVec = []
     char_list = tokenizer(smiles)
+    # 'unk' 토큰 인덱스 가져오기 (없으면 None)
+    unk_idx = letters.get('unk', None)
+    
     for item in char_list:
-        resultVec.append(letters[item])
+        # vocabulary에 있는 토큰이면 사용, 없으면 'unk' 사용
+        if item in letters:
+            resultVec.append(letters[item])
+        elif unk_idx is not None:
+            resultVec.append(unk_idx)
+        else:
+            # 'unk' 토큰도 없으면 KeyError 발생 (이전 동작 유지)
+            resultVec.append(letters[item])
         
 
  
