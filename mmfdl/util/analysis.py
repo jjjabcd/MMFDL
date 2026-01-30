@@ -24,7 +24,7 @@ def plotLoss(loss_train, loss_val, savePath):
     plt.tick_params(labelsize=15)
     plt.tight_layout()
     fig.savefig(savePath, dpi=300)
-    plt.show()
+    # plt.show()
 
 def calR(y_pred, y):
     y_pred = np.squeeze(y_pred)
@@ -40,25 +40,25 @@ def pltPredict_linregress(y_pred, y, save_path):
     
     # 길이 체크
     if len(y_pred) < 2 or len(y) < 2:
-        print(f"Warning: y_pred length={len(y_pred)}, y length={len(y)}. Skipping plot.")
+        # print(f"Warning: y_pred length={len(y_pred)}, y length={len(y)}. Skipping plot.")
         return
     
     if len(y_pred) != len(y):
-        print(f"Warning: y_pred length={len(y_pred)} != y length={len(y)}. Truncating to min length.")
+        # print(f"Warning: y_pred length={len(y_pred)} != y length={len(y)}. Truncating to min length.")
         min_len = min(len(y_pred), len(y))
         y_pred = y_pred[:min_len]
         y = y[:min_len]
     
-    print("pearson: ",scipy.stats.pearsonr(y_pred, y))
+    # print("pearson: ",scipy.stats.pearsonr(y_pred, y))
 
     maxValue = math.ceil(max(np.max(y), np.max(y_pred)))
     minValue = math.ceil(min(np.min(y), np.min(y_pred)))
     y_flat_list = y_pred.flatten().tolist()
     slope, intercept, r_value, p_value, std_err = stats.linregress(y, y_flat_list)
     line = slope * np.array(y) + intercept
-    print(slope, r_value)
+    # print(slope, r_value)
 
-    fig = plt.figure()#�½�һ��ͼ
+    fig = plt.figure()
     plt.xlabel('actual value', fontsize=20)
     plt.ylabel('predicted value', fontsize=20)
     plt.tick_params(labelsize=15)
@@ -73,7 +73,7 @@ def pltPredict_linregress(y_pred, y, save_path):
     plt.yticks(fontsize=15)
     plt.tight_layout()
     fig.savefig(save_path, dpi=300)
-    plt.show()
+    # plt.show()
 
 def rmseAndMae(yDic, savePath):
     with open(savePath, 'w') as file:
